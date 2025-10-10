@@ -2,7 +2,7 @@ import threading
 from watchdog.observers import Observer
 
 from Wplace.config import ConfigHandler
-from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QLineEdit, QPushButton
+from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QLineEdit, QPushButton, QGroupBox, QScrollArea
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QKeySequence
 import yaml
@@ -21,21 +21,19 @@ class ConfigEditor(QMainWindow):
         self.config_data = self.load_config()
         self.temp_data = self.config_data.copy()
 
-        # Main widget and layout
+        # Use a scroll area for better navigation
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
         self.central_widget = QWidget()
-        self.setCentralWidget(self.central_widget)
+        scroll_area.setWidget(self.central_widget)
+        self.setCentralWidget(scroll_area)
+
         self.layout = QVBoxLayout()
         self.central_widget.setLayout(self.layout)
 
-        # Display config parameters
+        # Display config parameters with nested support
         self.input_fields = {}
-        for key, value in self.config_data.items():
-            label = QLabel(key)
-            input_field = QLineEdit(str(value))
-            input_field.textChanged.connect(lambda text, k=key: self.update_temp_data(k, text))
-            self.layout.addWidget(label)
-            self.layout.addWidget(input_field)
-            self.input_fields[key] = input_field
+        self.display_config(self.config_data, self.layout)
 
         # Buttons
         self.save_button = QPushButton("Save")
@@ -65,11 +63,33 @@ class ConfigEditor(QMainWindow):
         for key, value in self.temp_data.items():
             self.input_fields[key].setText(str(value))
 
+    def display_config(self, config, parent_layout, prefix=""):
+        for key, value in config.items():
+            full_key = f"{prefix}.{key}" if prefix else key
+            if isinstance(value, dict):
+                group_box = QGroupBox(key)
+                group_layout = QVBoxLayout()
+                group_box.setLayout(group_layout)
+                parent_layout.addWidget(group_box)
+                self.display_config(value, group_layout, full_key)
+            else:
+                label = QLabel(key)
+                input_field = QLineEdit(str(value))
+                input_field.setMinimumWidth(300)  # Set appropriate size
+                input_field.textChanged.connect(lambda text, k=full_key: self.update_temp_data(k, text))
+                parent_layout.addWidget(label)
+                parent_layout.addWidget(input_field)
+                self.input_fields[full_key] = input_field
+
     def update_temp_data(self, key, text):
+        keys = key.split('.')
+        temp = self.temp_data
+        for k in keys[:-1]:
+            temp = temp.setdefault(k, {})
         try:
-            self.temp_data[key] = eval(text)  # Convert to Python type if possible
+            temp[keys[-1]] = eval(text)  # Convert to Python type if possible
         except:
-            self.temp_data[key] = text
+            temp[keys[-1]] = text
 
     def keyPressEvent(self, event):
         # Capture Ctrl+Z for undo and Ctrl+Y for redo
