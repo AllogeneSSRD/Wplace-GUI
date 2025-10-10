@@ -4,6 +4,7 @@ from watchdog.observers import Observer
 from Wplace.config import ConfigHandler
 from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QLineEdit, QPushButton
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QKeySequence
 import yaml
 
 config_path = 'config.yaml'
@@ -44,6 +45,10 @@ class ConfigEditor(QMainWindow):
         self.layout.addWidget(self.save_button)
         self.layout.addWidget(self.reset_button)
 
+        # Enable undo/redo for input fields
+        for input_field in self.input_fields.values():
+            input_field.setUpdatesEnabled(True)
+
     def load_config(self):
         with open(self.config_path, 'r', encoding='utf-8') as f:
             return yaml.safe_load(f)
@@ -65,6 +70,23 @@ class ConfigEditor(QMainWindow):
             self.temp_data[key] = eval(text)  # Convert to Python type if possible
         except:
             self.temp_data[key] = text
+
+    def keyPressEvent(self, event):
+        # Capture Ctrl+Z for undo and Ctrl+Y for redo
+        if event.matches(QKeySequence.Undo):
+            print("Undo key detected")
+            focused_widget = self.focusWidget()
+            if isinstance(focused_widget, QLineEdit):
+                focused_widget.undo()
+                print("Undo performed")
+        elif event.matches(QKeySequence.Redo):
+            print("Redo key detected")
+            focused_widget = self.focusWidget()
+            if isinstance(focused_widget, QLineEdit):
+                focused_widget.redo()
+                print("Redo performed")
+        else:
+            super().keyPressEvent(event)
 
 
 if __name__ == "__main__":
