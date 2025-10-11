@@ -2,10 +2,11 @@ import threading
 from watchdog.observers import Observer
 
 from Wplace.config import ConfigHandler
-from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QLineEdit, QPushButton, QGroupBox, QScrollArea
+from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel, QLineEdit, QPushButton, QGroupBox, QScrollArea, QHBoxLayout
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QKeySequence
 import yaml
+from collections import OrderedDict
 
 config_path = 'config.yaml'
 
@@ -31,17 +32,26 @@ class ConfigEditor(QMainWindow):
         self.layout = QVBoxLayout()
         self.central_widget.setLayout(self.layout)
 
-        # Display config parameters with nested support
-        self.input_fields = {}
-        self.display_config(self.config_data, self.layout)
-
-        # Buttons
+        # Create a top bar for Save and Reset buttons
+        self.top_bar = QHBoxLayout()
         self.save_button = QPushButton("Save")
         self.save_button.clicked.connect(self.save_config)
         self.reset_button = QPushButton("Reset")
         self.reset_button.clicked.connect(self.reset_config)
-        self.layout.addWidget(self.save_button)
-        self.layout.addWidget(self.reset_button)
+        self.top_bar.addWidget(self.save_button)
+        self.top_bar.addWidget(self.reset_button)
+
+        # Main layout with top bar and scroll area
+        self.main_layout = QVBoxLayout()
+        self.main_layout.addLayout(self.top_bar)
+        self.main_layout.addWidget(scroll_area)
+        central_widget = QWidget()
+        central_widget.setLayout(self.main_layout)
+        self.setCentralWidget(central_widget)
+
+        # Display config parameters with nested support
+        self.input_fields = {}
+        self.display_config(self.config_data, self.layout)
 
         # Enable undo/redo for input fields
         for input_field in self.input_fields.values():
@@ -49,17 +59,17 @@ class ConfigEditor(QMainWindow):
 
     def load_config(self):
         with open(self.config_path, 'r', encoding='utf-8') as f:
-            return yaml.safe_load(f)
+            return yaml.load(f, Loader=yaml.SafeLoader)
 
     def save_config(self):
         with open(self.config_path, 'w', encoding='utf-8') as f:
-            yaml.safe_dump(self.temp_data, f)
+            yaml.dump(self.temp_data, f, Dumper=yaml.SafeDumper, sort_keys=False)
         self.config_data = self.temp_data.copy()
 
     def reset_config(self):
         example_path = 'config_example.yaml'
         with open(example_path, 'r', encoding='utf-8') as f:
-            self.temp_data = yaml.safe_load(f)
+            self.temp_data = yaml.load(f, Loader=yaml.SafeLoader)
         for key, value in self.temp_data.items():
             self.input_fields[key].setText(str(value))
 
