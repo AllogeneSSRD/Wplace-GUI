@@ -16,7 +16,7 @@ class ConfigEditor(QMainWindow):
         super().__init__()
         self.config_path = config_path
         self.setWindowTitle("Config Editor")
-        self.resize(600, 400)
+        self.resize(600, 800)
 
         # Load config
         self.config_data = self.load_config()
@@ -70,8 +70,17 @@ class ConfigEditor(QMainWindow):
         example_path = 'config_example.yaml'
         with open(example_path, 'r', encoding='utf-8') as f:
             self.temp_data = yaml.load(f, Loader=yaml.SafeLoader)
-        for key, value in self.temp_data.items():
-            self.input_fields[key].setText(str(value))
+
+        def update_fields(config, prefix=""):
+            for key, value in config.items():
+                full_key = f"{prefix}.{key}" if prefix else key
+                if isinstance(value, dict):
+                    update_fields(value, full_key)
+                else:
+                    if full_key in self.input_fields:
+                        self.input_fields[full_key].setText(str(value))
+
+        update_fields(self.temp_data)
 
     def display_config(self, config, parent_layout, prefix=""):
         for key, value in config.items():
