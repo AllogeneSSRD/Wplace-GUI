@@ -1,5 +1,9 @@
 .vscode/
 __pycache__/
+*.dist/
+* - 副本/
 
 *.yaml
 *.txt
+
+*_.py
