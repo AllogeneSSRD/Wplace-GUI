@@ -45,15 +45,15 @@ class MainWindow(QMainWindow):
 
         # Dropdown for exe selection
         self.exe_dropdown = QComboBox(self)
-        self.exe_dropdown.addItems(["main_exe", "image_process_exe", "config_GUI_exe"])
+        self.exe_dropdown.addItems(["main.exe", "image_process.exe", "config_GUI.exe"])
         toolbar_layout.addWidget(self.exe_dropdown)
 
-        self.run_button = QPushButton("Run EXE", self)
+        self.run_button = QPushButton("运行 EXE", self)
         self.run_button.clicked.connect(self.run_selected_exe)
         toolbar_layout.addWidget(self.run_button)
 
         # Switch interface button
-        self.switch_button = QPushButton("Switch Interface", self)
+        self.switch_button = QPushButton("查看单色mask", self)
         self.switch_button.clicked.connect(self.switch_interface)
         toolbar_layout.addWidget(self.switch_button)
 
@@ -139,11 +139,21 @@ class MainWindow(QMainWindow):
 
     def run_selected_exe(self):
         exe_name = self.exe_dropdown.currentText()
-        exe_path = f"path/to/{exe_name}.exe"  # Replace with actual paths
-        if os.path.exists(exe_path):
+        base_folder = Path(self.base_folder_input.text())
+        exe_paths = {
+            "main.exe": f"{base_folder}/main.exe",
+            "image_process.exe": f"{base_folder}/image_process.exe",
+            "config_GUI.exe": f"{base_folder}/config_GUI.exe"
+        }
+
+        exe_path = exe_paths.get(exe_name)
+        if exe_path and os.path.exists(exe_path):
             subprocess.Popen(exe_path, shell=True)
+        else:
+            print(f"Executable not found: {exe_path}")
 
     def switch_interface(self):
+        self.switch_button.setText("返回主界面")
         # Placeholder for switching interface logic
         print("Switching interface")
 
