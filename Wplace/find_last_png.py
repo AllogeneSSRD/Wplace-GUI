@@ -137,6 +137,29 @@ def find_last_one(folder_path, regex=None):
     else:
         return None
 
+def find_color(folder_path, regex=None):
+    # 正则表达式匹配文件名格式
+    if regex is None:
+        regex = r'^_mask_#(\d{2})*\.png$'
+    pattern = re.compile(regex)
+
+    # 读取文件夹下所有文件
+    files = os.listdir(folder_path)
+
+    # 筛选出符合格式的文件并排序
+    valid_files = []
+    for file in files:
+        match = pattern.match(file)
+        if match:
+            file_path = os.path.join(folder_path, file)
+            valid_files.append(file_path)
+
+    # 返回最新的一个文件
+    if valid_files:
+        return valid_files
+    else:
+        return None
+
 def copy_and_rename(filename, output_folder):
     if filename:
         basename = os.path.basename(filename)
