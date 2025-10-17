@@ -9,12 +9,14 @@ import yaml
 from collections import OrderedDict
 
 config_path = 'config.yaml'
+example_path = 'config_example.yaml'
 
 
 class ConfigEditor(QMainWindow):
-    def __init__(self, config_path):
+    def __init__(self, config_path, example_path):
         super().__init__()
         self.config_path = config_path
+        self.example_path = example_path
         self.setWindowTitle("Config Editor")
         self.resize(600, 800)
 
@@ -136,6 +138,6 @@ if __name__ == "__main__":
     observer.start()
 
     app = QApplication([])
-    editor = ConfigEditor('config.yaml')
+    editor = ConfigEditor(config_path, example_path)
     editor.show()
     app.exec()
