@@ -1,5 +1,10 @@
 .vscode/
 __pycache__/
+
+timeline/
+timeline_cropped_png/
+timeline_color/
+
 *.dist/
 * - 副本/
 

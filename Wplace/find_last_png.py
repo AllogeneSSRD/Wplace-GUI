@@ -83,7 +83,7 @@ def find_last_in_hours(folder_path):
             file_datetime = datetime.strptime(date_str + time_str, '%Y%m%d%H%M%S')
             file_path = os.path.join(folder_path, file)
             valid_files.append((file_datetime, file_path))
-    
+
     valid_files.sort()  # 按时间排序
 
     # 创建字典并填入数据
@@ -110,13 +110,15 @@ def find_last_in_hours(folder_path):
 
     return result_dict
 
-def find_last_one(folder_path):
+def find_last_one(folder_path, regex=None):
     # 正则表达式匹配文件名格式
-    pattern = re.compile(r'^mask_all_(\d{8})_(\d{6})\.png$')
+    if regex is None:
+        regex = r'^mask_all_(\d{8})_(\d{6})\.png$'
+    pattern = re.compile(regex)
 
     # 读取文件夹下所有文件
     files = os.listdir(folder_path)
-    
+
     # 筛选出符合格式的文件并排序
     valid_files = []
     for file in files:
@@ -126,7 +128,7 @@ def find_last_one(folder_path):
             file_datetime = datetime.strptime(date_str + time_str, '%Y%m%d%H%M%S')
             file_path = os.path.join(folder_path, file)
             valid_files.append((file_datetime, file_path))
-    
+
     valid_files.sort()  # 按时间排序
 
     # 返回最新的一个文件
@@ -155,5 +157,17 @@ if __name__ == "__main__":
     # print(result)
 
     folder_path = 'timeline'
-    result = find_last_one(folder_path)
+    result = find_last_one(folder_path, '^(\\d{8})_(\\d{6})\\.png$')
     print(f"Latest file: {result}")
+
+    folder_path = 'timeline_cropped_png'
+    result = find_last_one(folder_path, '^(\\d{8})_(\\d{6})\\.png$')
+    print(f"Latest file in cropped folder: {result}")
+
+    folder_path = 'timeline_color'
+    result = find_last_one(folder_path, '^finish_all_(\\d{8})_(\\d{6})\\.png$')
+    print(f"Latest file in color folder: {result}")
+    result = find_last_one(folder_path, '^mask_all_(\\d{8})_(\\d{6})\\.png$')
+    print(f"Latest mask_all file in color folder: {result}")
+    result = find_last_one(folder_path, '^todo_all_(\\d{8})_(\\d{6})\\.png$')
+    print(f"Latest todo_all file in color folder: {result}")
