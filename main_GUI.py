@@ -9,7 +9,7 @@ import subprocess
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Image Viewer GUI")
+        self.setWindowTitle("Wplace GUI")
 
         # Main layout
         self.central_widget = QWidget()
@@ -29,7 +29,7 @@ class MainWindow(QMainWindow):
         # Timer for periodic updates
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_images)
-        self.timer.start(5000)  # Update every 5 seconds
+        self.timer.start(1000)  # Update every 1 second
 
     def create_toolbar(self):
         toolbar_layout = QHBoxLayout()
@@ -75,7 +75,7 @@ class MainWindow(QMainWindow):
 
             label = QLabel("No Image")
             label.setStyleSheet("background-color: lightgray; border: 1px solid black;")
-            label.setFixedSize(200, 200)  # Placeholder size
+            label.setFixedSize(300, 225)  # Placeholder size
             layout.addWidget(label)
 
             caption = QLabel(name)
@@ -95,9 +95,28 @@ class MainWindow(QMainWindow):
             "timeline_cropped": {"folder": base_folder / 'timeline_cropped_png', "pattern": r'^(\d{8})_(\d{6}).png$'},
             "timeline_color_finish": {"folder": base_folder / 'timeline_color', "pattern": r'^finish_all_(\d{8})_(\d{6}).png$'},
             "timeline_color_mask": {"folder": base_folder / 'timeline_color', "pattern": r'^mask_all_(\d{8})_(\d{6}).png$'},
-            # "template": {"folder": base_folder, "pattern": r'template.png'},
             "timeline_color_todo": {"folder": base_folder / 'timeline_color', "pattern": r'^todo_all_(\d{8})_(\d{6}).png$'}
         }
+
+        # Handle template separately
+        template_path = base_folder / 'template.png'
+        if template_path.exists():
+            pixmap = QPixmap(str(template_path))
+            template_label = self.image_labels["template"]
+            template_label.setPixmap(pixmap.scaled(template_label.size().width(), template_label.size().height()))
+
+            # Adjust child window sizes based on template aspect ratio
+            aspect_ratio = pixmap.width() / pixmap.height()
+            new_width = int(225 * aspect_ratio)
+            new_height = 225
+
+            for name in ["timeline_color_finish", "timeline_color_mask", "timeline_color_todo", "template"]:
+                label = self.image_labels[name]
+                label.setFixedSize(new_width, new_height)
+
+            # Set timeline_cropped to be twice the size of other windows
+            timeline_cropped_label = self.image_labels["timeline_cropped"]
+            timeline_cropped_label.setFixedSize(new_width * 2, new_height * 2)
 
         for name, config in folders_and_patterns.items():
             folder = str(config["folder"].resolve())

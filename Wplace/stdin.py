@@ -1,3 +1,5 @@
+from datetime import datetime
+
 def my_print(head, head_type='info', content=None):
     """
     前景色（文本颜色）：
@@ -37,7 +39,8 @@ def my_print(head, head_type='info', content=None):
     else:
         bg = 44 # 蓝
         word = 38
-    print(f"\033[{bg};{word}m {head} \033[0m {content}")
+    time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+    print(f"\033[{bg};{word}m {head} \033[0m {f'[{time}] ' + content}")
 
 if __name__ == '__main__':
     my_print('Hello, world!', 'info', 'This is a test message.')
