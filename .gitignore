@@ -2,6 +2,10 @@
 __pycache__/
 
 模板/
+timeline/
+timeline_color/
+timeline_cropped_jpg/
+timeline_cropped_png/
 
 *.dist/
 * - 副本/

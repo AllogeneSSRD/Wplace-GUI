@@ -113,7 +113,7 @@ def find_last_in_hours(folder_path):
 def find_last_one(folder_path, regex=None):
     # 正则表达式匹配文件名格式
     if regex is None:
-        regex = r'^mask_all_(\d{8})_(\d{6})\.png$'
+        regex = r'^(\d{8})_(\d{6}).png$'
     pattern = re.compile(regex)
 
     # 读取文件夹下所有文件
@@ -140,7 +140,7 @@ def find_last_one(folder_path, regex=None):
 def find_color(folder_path, regex=None):
     # 正则表达式匹配文件名格式
     if regex is None:
-        regex = r'^_mask_#(\d{2})*\.png$'
+        regex = r'^_mask_#(\d{2})\*\.png$'
     pattern = re.compile(regex)
 
     # 读取文件夹下所有文件
@@ -179,18 +179,21 @@ if __name__ == "__main__":
     # result = find_last_in_day(folder_path)
     # print(result)
 
-    folder_path = 'timeline'
-    result = find_last_one(folder_path, '^(\\d{8})_(\\d{6})\\.png$')
-    print(f"Latest file: {result}")
+    # folder_path = 'timeline'
+    # result = find_last_one(folder_path, '^(\\d{8})_(\\d{6})\\.png$')
+    # print(f"Latest file: {result}")
 
-    folder_path = 'timeline_cropped_png'
-    result = find_last_one(folder_path, '^(\\d{8})_(\\d{6})\\.png$')
-    print(f"Latest file in cropped folder: {result}")
+    # folder_path = 'timeline_cropped_png'
+    # result = find_last_one(folder_path, '^(\\d{8})_(\\d{6})\\.png$')
+    # print(f"Latest file in cropped folder: {result}")
 
-    folder_path = 'timeline_color'
-    result = find_last_one(folder_path, '^finish_all_(\\d{8})_(\\d{6})\\.png$')
-    print(f"Latest file in color folder: {result}")
-    result = find_last_one(folder_path, '^mask_all_(\\d{8})_(\\d{6})\\.png$')
-    print(f"Latest mask_all file in color folder: {result}")
-    result = find_last_one(folder_path, '^todo_all_(\\d{8})_(\\d{6})\\.png$')
-    print(f"Latest todo_all file in color folder: {result}")
+    # folder_path = 'timeline_color'
+    # result = find_last_one(folder_path, '^finish_all_(\\d{8})_(\\d{6})\\.png$')
+    # print(f"Latest file in color folder: {result}")
+    # result = find_last_one(folder_path, '^mask_all_(\\d{8})_(\\d{6})\\.png$')
+    # print(f"Latest mask_all file in color folder: {result}")
+    # result = find_last_one(folder_path, '^todo_all_(\\d{8})_(\\d{6})\\.png$')
+    # print(f"Latest todo_all file in color folder: {result}")
+    path = r"D:\code\Elysia-py3.9.19-yolov8.1\Wplace-GUI\timeline_color"
+    result = find_last_one(path, '^mask_all_(\\d{8})_(\\d{6})\\.png$')
+    print(f"Latest mask_all: {result}")
