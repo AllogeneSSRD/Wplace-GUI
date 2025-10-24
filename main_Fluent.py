@@ -8,6 +8,7 @@ from PySide6.QtWidgets import QApplication, QHBoxLayout, QFrame
 from qfluentwidgets import NavigationItemPosition, FluentWindow, SubtitleLabel, setFont
 from qfluentwidgets import FluentIcon as FIF
 
+from sub.home_interface import HomeInterface
 
 class Widget(QFrame):
 
@@ -30,8 +31,9 @@ class Window(FluentWindow):
     def __init__(self):
         super().__init__()
 
-        # 创建子界面，实际使用时将 Widget 换成自己的子界面
-        self.homeInterface = Widget('Home Interface', self)
+        # 创建子界面，必须给子界面设置全局唯一的对象名
+        # self.homeInterface = Widget('Home Interface', self)
+        self.homeInterface = HomeInterface(self)
         self.maskInterface = Widget('Mask Interface', self)
         self.settingInterface = Widget('Setting Interface', self)
 

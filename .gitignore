@@ -2,6 +2,7 @@
 __pycache__/
 
 模板/
+clock/
 timeline/
 timeline_color/
 timeline_cropped_jpg/
