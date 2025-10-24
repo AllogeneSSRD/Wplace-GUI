@@ -26,8 +26,8 @@ class Ui_Form(object):
 
         # Add a basic layout to the form
         self.layout = QVBoxLayout(Form)
-        self.placeholder_label = QLabel("This is a placeholder. Replace with actual content.", Form)
-        self.layout.addWidget(self.placeholder_label)
+        # self.placeholder_label = QLabel("This is a placeholder. Replace with actual content.", Form)
+        # self.layout.addWidget(self.placeholder_label)
 
         self.retranslateUi(Form)
         QMetaObject.connectSlotsByName(Form)

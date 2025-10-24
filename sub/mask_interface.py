@@ -4,7 +4,7 @@ from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QGridLayout, QPushButton, QLineEdit, QFileDialog, QScrollArea
 from PySide6.QtCore import QTimer, Qt
 
-from qfluentwidgets import ScrollArea
+from qfluentwidgets import ScrollArea, BodyLabel, LineEdit, PushButton, ImageLabel
 
 from Wplace.find_last_png import find_color
 
@@ -39,11 +39,11 @@ class MaskInterface(Ui_Form, QWidget):
         toolbar_layout = QHBoxLayout()
 
         # Base folder input
-        self.base_folder_input = QLineEdit(self)
+        self.base_folder_input = LineEdit(self)
         self.base_folder_input.setPlaceholderText("Enter base folder path")
         toolbar_layout.addWidget(self.base_folder_input)
 
-        self.load_button = QPushButton("Reload Base Folder", self)
+        self.load_button = PushButton("Reload Base Folder", self)
         self.load_button.clicked.connect(self.reload_base_folder)
         toolbar_layout.addWidget(self.load_button)
 
@@ -74,8 +74,8 @@ class MaskInterface(Ui_Form, QWidget):
         if template_path.exists():
             pixmap = QPixmap(str(template_path))
             aspect_ratio = pixmap.width() / pixmap.height()
-            new_width = int(180 * aspect_ratio)
-            new_height = 180
+            new_height = 325
+            new_width = int(new_height * aspect_ratio)
         else:
             print("Template image not found at:", template_path)
             new_width = 200
@@ -89,7 +89,7 @@ class MaskInterface(Ui_Form, QWidget):
 
         if not timeline_color_list:
             print("No images found in timeline_color folder.")
-            empty_label = QLabel("No images to display.")
+            empty_label = BodyLabel("No images to display.")
             empty_label.setAlignment(Qt.AlignCenter)
             self.scroll_layout.addWidget(empty_label)
             self.scroll_widget.adjustSize()
@@ -107,12 +107,13 @@ class MaskInterface(Ui_Form, QWidget):
                 print("Failed to load image:", image_path)
                 continue
 
-            image_label = QLabel()
+            image_label = ImageLabel()
+            # image_label.setBorderRadius(8, 8, 8, 8)
             image_label.setPixmap(pixmap.scaled(new_width, new_height, Qt.KeepAspectRatio))  # Scale images to adjusted size
             caption_label = QLabel(Path(image_path).name)
 
-            row = index // 4
-            col = index % 4
+            row = index // 2
+            col = index % 2
             self.scroll_layout.addWidget(image_label, row * 2, col)
             self.scroll_layout.addWidget(caption_label, row * 2 + 1, col)
 

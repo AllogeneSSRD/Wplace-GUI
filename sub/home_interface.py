@@ -6,7 +6,7 @@ from PySide6.QtGui import QColor, QPixmap
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QGridLayout, QPushButton, QLineEdit, QComboBox, QFileDialog
 from PySide6.QtCore import QTimer
 
-from qfluentwidgets import FluentIcon, setFont, InfoBarIcon
+from qfluentwidgets import BodyLabel, LineEdit, PushButton, ComboBox
 
 from Wplace.find_last_png import find_last_one
 
@@ -34,20 +34,20 @@ class HomeInterface(Ui_Form, QWidget):
         toolbar_layout = QHBoxLayout()
 
         # Base folder input
-        self.base_folder_input = QLineEdit(self)
+        self.base_folder_input = LineEdit(self)
         self.base_folder_input.setPlaceholderText("Enter base folder path")
         toolbar_layout.addWidget(self.base_folder_input)
 
-        self.load_button = QPushButton("Reload Base Folder", self)
+        self.load_button = PushButton("Reload Base Folder", self)
         self.load_button.clicked.connect(self.reload_base_folder)
         toolbar_layout.addWidget(self.load_button)
 
         # Dropdown for exe selection
-        self.exe_dropdown = QComboBox(self)
+        self.exe_dropdown = ComboBox(self)
         self.exe_dropdown.addItems(["main.exe", "image_process.exe", "config_GUI.exe"])
         toolbar_layout.addWidget(self.exe_dropdown)
 
-        self.run_button = QPushButton("运行 EXE", self)
+        self.run_button = PushButton("运行 EXE", self)
         self.run_button.clicked.connect(self.run_selected_exe)
         toolbar_layout.addWidget(self.run_button)
 
@@ -74,7 +74,8 @@ class HomeInterface(Ui_Form, QWidget):
             label.setFixedSize(200, 150)
             layout.addWidget(label)
 
-            caption = QLabel(name)
+            # caption = QLabel(name)
+            caption = BodyLabel(name)
             layout.addWidget(caption)
 
             widget.setLayout(layout)
@@ -103,8 +104,8 @@ class HomeInterface(Ui_Form, QWidget):
 
             # Adjust child window sizes based on template aspect ratio
             aspect_ratio = pixmap.width() / pixmap.height()
-            new_width = int(225 * aspect_ratio)
-            new_height = 225
+            new_height = 215
+            new_width = int(new_height * aspect_ratio)
 
             for name in ["timeline_color_finish", "timeline_color_mask", "timeline_color_todo", "template"]:
                 label = self.image_labels[name]
