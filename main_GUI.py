@@ -72,6 +72,7 @@ class MainWindow(QMainWindow):
         for name, pos in positions.items():
             widget = QWidget()
             layout = QVBoxLayout()
+            # layout.setSpacing(20)  # Increase spacing between elements
 
             label = QLabel("No Image")
             label.setStyleSheet("background-color: lightgray; border: 1px solid black;")
@@ -147,15 +148,73 @@ class MainWindow(QMainWindow):
         }
 
         exe_path = exe_paths.get(exe_name)
-        if exe_path and os.path.exists(exe_path):
+        if exe_name == "config_GUI.exe" and exe_path and os.path.exists(exe_path):
             subprocess.Popen(exe_path, shell=True)
+        elif exe_path and os.path.exists(exe_path):
+            exe_dir = os.path.dirname(exe_path)
+            subprocess.Popen(["start", "cmd", "/k", f"cd /d {exe_dir} && {exe_name}"], shell=True)  # Change to exe directory and run
         else:
             print(f"Executable not found: {exe_path}")
 
     def switch_interface(self):
-        self.switch_button.setText("返回主界面")
-        # Placeholder for switching interface logic
-        print("Switching interface")
+        if self.switch_button.text() == "查看单色mask":
+            self.switch_button.setText("返回主界面")
+
+            # Hide the main interface
+            for widget in self.image_labels.values():
+                widget.parentWidget().hide()
+
+            # Create a new scrollable widget for the secondary interface
+            self.scroll_area = QScrollArea(self)
+            self.scroll_widget = QWidget()
+            self.scroll_layout = QGridLayout(self.scroll_widget)
+            self.scroll_layout.setHorizontalSpacing(20)  # Increase horizontal spacing
+            self.scroll_layout.setVerticalSpacing(10)    # Increase vertical spacing
+
+            # Get timeline_color_list images
+            base_folder = Path(self.base_folder_input.text())
+            timeline_color_folder = base_folder / 'timeline_color'
+            timeline_color_list = find_color(timeline_color_folder, r'^_mask_#(\d{2}).*.png$')
+
+            # Adjust child window sizes based on template aspect ratio
+            template_path = base_folder / 'template.png'
+            if template_path.exists():
+                pixmap = QPixmap(str(template_path))
+                aspect_ratio = pixmap.width() / pixmap.height()
+                new_width = int(180 * aspect_ratio)
+                new_height = 180
+            else:
+                new_width = 200
+                new_height = 150
+
+            # Populate the grid with images and labels
+            for index, image_path in enumerate(timeline_color_list):
+                pixmap = QPixmap(image_path)
+                image_label = QLabel()
+                image_label.setPixmap(pixmap.scaled(new_width, new_height))  # Scale images to adjusted size
+                caption_label = QLabel(Path(image_path).name)
+
+                row = index // 4
+                col = index % 4
+                self.scroll_layout.addWidget(image_label, row * 2, col)  # Add image
+                self.scroll_layout.addWidget(caption_label, row * 2 + 1, col)  # Add caption below image
+
+            self.scroll_widget.setLayout(self.scroll_layout)
+            self.scroll_area.setWidget(self.scroll_widget)
+            self.main_layout.addWidget(self.scroll_area)
+
+        else:
+            self.switch_button.setText("查看单色mask")
+
+            # Remove the scrollable widget and return to the main interface
+            self.scroll_area.deleteLater()
+
+            # Show the main interface
+            for widget in self.image_labels.values():
+                widget.parentWidget().show()
+
+            # Resize the main window to fit the original layout
+            self.resize(400, 300)
 
 if __name__ == "__main__":
     app = QApplication([])

@@ -12,5 +12,6 @@ timeline_cropped_png/
 
 *.yaml
 *.txt
+!license.txt
 
 *_.py
