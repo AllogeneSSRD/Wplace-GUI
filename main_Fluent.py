@@ -9,6 +9,7 @@ from qfluentwidgets import NavigationItemPosition, FluentWindow, SubtitleLabel, 
 from qfluentwidgets import FluentIcon as FIF
 
 from sub.home_interface import HomeInterface
+from sub.mask_interface import MaskInterface
 
 class Widget(QFrame):
 
@@ -34,7 +35,8 @@ class Window(FluentWindow):
         # 创建子界面，必须给子界面设置全局唯一的对象名
         # self.homeInterface = Widget('Home Interface', self)
         self.homeInterface = HomeInterface(self)
-        self.maskInterface = Widget('Mask Interface', self)
+        # self.maskInterface = Widget('Mask Interface', self)
+        self.maskInterface = MaskInterface(self)
         self.settingInterface = Widget('Setting Interface', self)
 
         self.initNavigation()
@@ -42,7 +44,7 @@ class Window(FluentWindow):
 
     def initNavigation(self):
         self.addSubInterface(self.homeInterface, FIF.HOME, 'Home')
-        self.addSubInterface(self.maskInterface, FIF.PALETTE, 'Music library')
+        self.addSubInterface(self.maskInterface, FIF.PALETTE, 'Mask')
 
         self.addSubInterface(self.settingInterface, FIF.SETTING, 'Settings', NavigationItemPosition.BOTTOM)
 
