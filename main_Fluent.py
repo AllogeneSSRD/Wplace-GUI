@@ -1,11 +1,11 @@
-
 import sys
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QApplication, QHBoxLayout, QFrame
+from PySide6.QtWidgets import QApplication, QHBoxLayout, QFrame, QVBoxLayout, QPushButton, QWidget
 
-from qfluentwidgets import NavigationItemPosition, FluentWindow, SubtitleLabel, setFont
+from qfluentwidgets import NavigationItemPosition, FluentWindow, MSFluentWindow,\
+    SubtitleLabel, setFont, Theme, setTheme, PushButton, PrimaryPushButton, toggleTheme
 from qfluentwidgets import FluentIcon as FIF
 
 from sub.home_interface import HomeInterface
@@ -26,7 +26,7 @@ class Widget(QFrame):
         self.setObjectName(text.replace(' ', '-'))
 
 
-class Window(FluentWindow):
+class Window(MSFluentWindow):
     """ 主界面 """
 
     def __init__(self):
@@ -43,10 +43,19 @@ class Window(FluentWindow):
         self.initWindow()
 
     def initNavigation(self):
-        self.addSubInterface(self.homeInterface, FIF.HOME, 'Home')
-        self.addSubInterface(self.maskInterface, FIF.PALETTE, 'Mask')
+        self.addSubInterface(self.homeInterface, FIF.HOME, 'Home', position=NavigationItemPosition.TOP)
+        self.addSubInterface(self.maskInterface, FIF.PALETTE, 'Mask', position=NavigationItemPosition.SCROLL)
 
-        self.addSubInterface(self.settingInterface, FIF.SETTING, 'Settings', NavigationItemPosition.BOTTOM)
+        self.addSubInterface(self.settingInterface, FIF.SETTING, 'Settings', position=NavigationItemPosition.SCROLL)
+
+        # Add theme toggle button to the settings interface
+        layout = QVBoxLayout(self.settingInterface)
+        self.theme_button = PrimaryPushButton(FIF.VIEW, "切换主题", self.settingInterface)
+        self.theme_button.setGeometry(20, 20, 160, 40)
+        # self.theme_button.move(10, 10)
+        self.theme_button.clicked.connect(toggleTheme)
+        layout.addWidget(self.theme_button)
+
 
     def initWindow(self):
         self.resize(900, 700)
